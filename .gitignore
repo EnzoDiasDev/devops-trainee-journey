@@ -1,0 +1,8 @@
+# Sistema
+.DS_Store
+*.swp
+
+# Segredos (vai importar MUITO na parte de AWS)
+.env
+*.pem
+credentials
