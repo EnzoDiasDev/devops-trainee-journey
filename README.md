@@ -12,7 +12,7 @@ Aprendendo na prática: anotações nas minhas palavras, labs, scripts e exercí
 | --- | --- | --- |
 | Linux | 🟡 Em andamento | [temas/linux](temas/linux) |
 | Git/GitHub | 🟡 Em andamento | [temas/git](temas/git) |
-| Incidentes (Status Page, gestão de incidentes, OneUptime) | 🟡 Em andamento | [temas/incidentes](temas/incidentes) |
+| Incidentes (Status Page, gestão de incidentes, OneUptime) | 🟢 Concluído | [temas/incidentes](temas/incidentes) |
 | Docker | ⚪ A fazer | [temas/docker](temas/docker) |
 | Kubernetes | ⚪ A fazer | [temas/kubernetes](temas/kubernetes) |
 | AWS | ⚪ A fazer | [temas/aws](temas/aws) |
