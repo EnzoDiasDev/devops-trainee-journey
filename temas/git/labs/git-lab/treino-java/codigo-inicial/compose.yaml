@@ -1,0 +1,14 @@
+services:
+  api:
+    build: .
+    image: claude/enzo-bank:${TAG:-dev}
+    ports:
+      - "${PORTA:-8070}:8080"
+    environment:
+      BANCO_NOME: Enzo Bank
+      TOKEN_ADMIN: segredo123
+    volumes:
+      - dados:/app/dados
+
+volumes:
+  dados:
