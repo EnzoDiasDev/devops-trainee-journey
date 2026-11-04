@@ -1,7 +1,7 @@
 # <Assunto da nota>
 
 > **Tema:** <linux | git | docker | aws | kubernetes | incidentes | ...>
-> **Origem:** <gestor | próprio | inesperado>
+> **Origem:** <indicado | próprio | inesperado>
 > **Iniciado em:** AAAA-MM-DD
 > **Status:** 🟡 Em andamento <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
 
