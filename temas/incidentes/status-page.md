@@ -1,9 +1,15 @@
-# Status page
+# Status page (página de status)
 
 > **Tema:** incidentes
-> **Origem:** gestor
+> **Origem:** indicado
 > **Iniciado em:** 2026-09-30
 > **Status:** 🟢 Concluído <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
+
+> **Nível:** iniciante. Faz par com [Gerenciamento de incidentes](gerenciamento-de-incidentes.md).
+
+## Em resumo
+
+Uma *status page* é a página pública em que uma empresa mostra se os seus sistemas estão funcionando. Esta nota explica para que ela serve, como é organizada e traz o vocabulário que aparece em qualquer conversa sobre disponibilidade e incidentes.
 
 ## Em minhas palavras
 
@@ -15,23 +21,23 @@ Status page é uma página pública que informa aos usuários se está tudo bem 
 - Transparência e confiança com o cliente
 - Deixar um histórico de incidentes
 - *Organiza a comunicação durante crises*
-    > Enquanto os engenheiro corrigem o problema, alguém precisa realizar o comunicado e atualizar a página. "Consertar" e "Comunicar" devem acontecer em paralelo.
+    > Enquanto os engenheiros corrigem o problema, alguém precisa realizar o comunicado e atualizar a página. "Consertar" e "Comunicar" devem acontecer em paralelo.
 
 **O que tem dentro?**
 Normalmente é dividida em quatro partes:
-- **LISTA DE COMPONENTES**: divide o serviço em pedaços (API, login, pagamentos, banco de dados, ...), pois raramente "tudo" caí.
+- **LISTA DE COMPONENTES**: divide o serviço em pedaços (API, login, pagamentos, banco de dados, ...), pois raramente "tudo" cai ao mesmo tempo.
 - **ESTADOS DOS COMPONENTES**:
     - Operational: Funcionando (verde)
     - Degraded performance: Funciona, mas está lento ou instável (amarelo)
     - Partial outage: Parte dos usuários ou das funções está fora do ar (laranja)
     - Major outage: Fora do ar (vermelho)
     - Under maintenance: Parado de propósito, manutenção planejada (azul)
-- **LINHA DO TEMPO**: atualização de cada problema que costumam passar por fases
+- **LINHA DO TEMPO**: atualizações de cada problema, que costumam passar por quatro fases:
     - Investigating: "Percebemos que algo está errado e estamos investigando"
     - Identified: "Achamos a causa"
     - Monitoring: "Aplicamos a correção e estamos observando se resolveu"
     - Resolved: "Resolvido"
-- **HISTÓRICO DE DISPONIBILIDADE**: barrinhas dos últimos 90 dias e um botão de "subscribe" para receber notificações por e-mail, slack, ... sem precisar ficar abrindo a status page.
+- **HISTÓRICO DE DISPONIBILIDADE**: barrinhas com os últimos 90 dias e um botão de "subscribe" para receber notificações (e-mail, Slack, ...) sem precisar ficar abrindo a página.
 
 **Termos da área**
 - Uptime / downtime: tempo em que o sistema está no ar / fora do ar. "Tivemos 20 minutos de downtime ontem."
@@ -56,6 +62,6 @@ Pense no painel de voos do aeroporto. Você não precisa ir ao balcão perguntar
 
 ## Referências
 
-- [Status page do Github](githubstatus.com)
-- [Status page da AWS](health.aws.amazon.com)
-- [Status page do Claude](status.claude.com)
+- [Status page do GitHub](https://www.githubstatus.com): exemplo de página pública bem completa
+- [Painel de saúde da AWS](https://health.aws.amazon.com/health/status)
+- [Status page do Claude](https://status.claude.com)
