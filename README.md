@@ -1,21 +1,22 @@
 # DevOps Trainee Journey
 
-Registro do que eu aprendo na minha jornada em DevOps — tanto os estudos que eu planejo quanto o que surge no dia a dia da vaga.
+Registro do que eu aprendo na minha jornada em DevOps: tanto os estudos que eu planejo quanto o que surge pelo caminho.
 Aprendendo na prática: anotações nas minhas palavras, labs, scripts e exercícios, organizados **por tema**.
 
-> ⚠️ Este repositório é público. Aqui ficam apenas conceitos e práticas gerais.
-> Nada de informações internas da empresa (sistemas, arquitetura, incidentes reais, clientes, credenciais).
+Cada tema tem um README com o índice e a ordem de leitura sugerida. Se você está começando, boas portas de entrada são
+[Linux](temas/linux), [Git](temas/git) e [API](temas/api).
 
 ## Temas
 
-| Tema | Status | Onde |
-| --- | --- | --- |
-| Linux | 🟡 Em andamento | [temas/linux](temas/linux) |
-| Git/GitHub | 🟡 Em andamento | [temas/git](temas/git) |
-| Incidentes (Status Page, gestão de incidentes, OneUptime) | 🟢 Concluído | [temas/incidentes](temas/incidentes) |
-| Docker | ⚪ A fazer | [temas/docker](temas/docker) |
-| Kubernetes | ⚪ A fazer | [temas/kubernetes](temas/kubernetes) |
-| AWS | ⚪ A fazer | [temas/aws](temas/aws) |
+| Tema | O que tem | Status | Onde |
+| --- | --- | --- | --- |
+| Linux | Cadernos e labs de linha de comando: arquivos, logs, permissões, processos | 🟡 Em andamento | [temas/linux](temas/linux) |
+| Git/GitHub | Notas sobre histórico, branches e merge; labs de Git e de fluxo em equipe | 🟡 Em andamento | [temas/git](temas/git) |
+| Incidentes | Status page, gerenciamento de incidentes, OneUptime e SSO | 🟢 Concluído | [temas/incidentes](temas/incidentes) |
+| API | Conceitos, REST, autenticação, paginação e webhooks | 🟡 Em andamento | [temas/api](temas/api) |
+| Docker | Lab em 5 níveis: contêineres, imagens, volumes, redes e Compose | 🟡 Em andamento (4 dos 5 níveis feitos) | [temas/docker](temas/docker) |
+| AWS | Lab por serviço no Free Tier, começando por EC2 | 🟡 Em andamento | [temas/aws](temas/aws) |
+| Kubernetes | Fundamentos | ⚪ A fazer | [temas/kubernetes](temas/kubernetes) |
 
 Legenda: 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer
 
@@ -27,14 +28,13 @@ O que vem a seguir (sem datas fixas) está no [ROADMAP.md](ROADMAP.md).
 .
 ├── README.md        # você está aqui
 ├── ROADMAP.md       # backlog de estudos: em andamento / próximos / concluído
-├── inbox/           # conteúdo novo que ainda não tem tema definido
+├── inbox/           # notas novas que ainda não têm tema definido
 ├── _templates/      # modelos de nota e de lab
 └── temas/
     └── <tema>/
-        ├── README.md   # status, índice e recursos do tema
-        ├── notas/      # anotações por assunto
-        ├── labs/       # exercícios práticos e ambientes de lab
-        └── scripts/    # scripts avulsos
+        ├── README.md   # status, índice e ordem de leitura do tema
+        ├── *.md        # notas: o que aprendi, nas minhas palavras
+        └── labs/       # exercícios práticos, ambientes de lab e scripts
 ```
 
 ## Como eu uso este repositório
