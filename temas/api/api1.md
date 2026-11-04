@@ -1,211 +1,153 @@
-# API - Parte I - Básico
+# API — Parte 1: o básico
 
 > **Tema:** API
-> **Origem:** Próprio
+> **Origem:** próprio
 > **Iniciado em:** 2026-10-05
 > **Status:** 🟡 Em andamento <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
+> **Nível:** iniciante. Não precisa saber programar para acompanhar.
+> **Continua em:** [Parte 2 — intermediário](api2.md)
 
-## Em minhas palavras
+## Em resumo
 
----
+Uma **API** é um jeito combinado de um programa pedir coisas a outro e receber respostas, sem precisar saber como o outro funciona por dentro. Esta nota explica o que ela é, por que existe, como é uma conversa via API (requisição e resposta) e mostra dois testes reais com `curl`.
 
-### O que é?
-API (Application Programming Interface, ou Interface de Programação de Aplicações) é uma forma combinada de um programa pedir coisas a outro programa e receber respostas, sem precisar saber como o outro funciona por dentro.
+## O que é uma API?
 
-### Por que existem?
-- Reaproveitar em vez de reinventar
-  - Um app de previsão do tempo não instala estações meteorológicas, ele pede os dados para a API de um serviço de clima. Um site que mostra "entrar com Google" não guarda sua senha do Google, ele conversa com a API do Google.
-- Integração
-  - Sistemas diferentes, feitos por empresas diferentes, em linguagens diferentes, conseguem trabalhar juntos. É assim que plataformas de atendimento recebem as perguntas de clientes dos marketplaces: o Mercado Livre, por exemplo, oferece uma API para que sistemas de terceiros leiam e respondam mensagens.
-- Segurança e controle
-  - Em vez de dar acesso direto ao banco de dados (que seria como deixar o cliente entrar na cozinha), a empresa expõe só o que quer, do jeito que quer, e pode verificar quem está pedindo.
+API significa *Application Programming Interface* (Interface de Programação de Aplicações). Na prática, é um "contrato": o sistema A diz "se você me mandar um pedido neste formato, eu devolvo uma resposta neste outro formato".
 
-### Conversa via API
+### Por que as APIs existem?
 
-Hoje, a maioria das APIs que você vai encontrar são APIs web, que conversam usando HTTP, o mesmo protocolo que seu navegador usa para abrir sites. A conversa sempre tem duas metades: uma requisição (request), que o cliente envia, e uma resposta (response), que o servidor devolve.
+- **Reaproveitar em vez de reinventar.** Um app de previsão do tempo não instala estações meteorológicas: ele pede os dados à API de um serviço de clima. Um site com "Entrar com Google" não guarda a sua senha do Google: ele conversa com a API do Google.
+- **Integrar sistemas diferentes.** Sistemas feitos por empresas, equipes e linguagens diferentes conseguem trabalhar juntos. Um exemplo: sistemas de atendimento leem e respondem mensagens de clientes de um marketplace porque o marketplace oferece uma API para isso.
+- **Dar segurança e controle.** Em vez de liberar acesso direto ao banco de dados (seria como deixar o cliente entrar na cozinha do restaurante), a empresa expõe só o que quer, do jeito que quer, e pode verificar quem está pedindo.
 
-> A requisição tem quatro partes (⚠️ IMPORTANTE!)
->
-> 1. O endereço (URL / endpoint). Para onde você está mandando o pedido. Por exemplo, https://api.github.com/users/octocat. Cada endereço específico que faz uma coisa é chamado de endpoint.
-> 2. **O método (ou verbo)**. O que você quer fazer. Os principais:
->   - GET: buscar ou ler algo. "Me mostra os dados do usuário."
->   - POST: criar algo novo. "Cadastra esse pedido."
->   - PUT / PATCH: atualizar algo existente. O PUT costuma substituir o recurso inteiro; o PATCH muda só uma parte.
->   - DELETE: apagar algo.
-> 3. **Os cabeçalhos (headers)**. Informações extras sobre o pedido, como "estou mandando dados em formato JSON" ou "esta é minha chave de acesso". É como o envelope de uma carta: não é o conteúdo, mas diz como tratar o conteúdo.
-> 4. **O corpo (body)**. Os dados que você está enviando, quando há algum. Um GET normalmente não tem corpo; um POST para criar um pedido teria os dados do pedido.
+## Como é a conversa
 
-> A resposta tem três partes principais
-> 1. O código de status. Um número de três dígitos que diz, de cara, se deu certo. A regra de bolso é olhar o primeiro dígito:
->    - 2xx: deu certo. 200 OK (tudo certo) e 201 Created (criado com sucesso) são os mais comuns
->    - 3xx: redirecionamento. "O que você procura está em outro endereço"
->    - 4xx: o erro foi do cliente. Você pediu algo errado
->      - 400 Bad Request (pedido mal formado) 
->      - 401 Unauthorized (você não se identificou) 
->      - 403 Forbidden (você se identificou, mas não tem permissão) 
->      - 404 Not Found (isso não existe)
->      - 429 Too Many Requests (você está pedindo rápido demais)
->    - 5xx: o erro foi do servidor. O pedido estava certo, mas o servidor falhou
->      - 500 Internal Server Error (quebrou algo lá dentro)
->      - 503 Service Unavailable (o serviço está fora ou sobrecarregado)
->
-> ⚠️ *Guarde essa diferença entre 4xx e 5xx, porque ela é muito importante em DevOps. Um pico de 5xx costuma ser sinal de incidente: é o seu sistema que está quebrado. Um pico de 4xx geralmente indica que algum cliente está usando a API errado.*
-> 2. Os cabeçalhos da resposta. Informações sobre a resposta, como o formato dos dados e por quanto tempo ela pode ficar em cache.
-> 3. O corpo da resposta. Os dados em si. Quase sempre em JSON, um formato de texto simples organizado em pares de "chave: valor". Por exemplo:
->   ```bash
->   {
->   "login": "octocat",
->   "name": "The Octocat",
->   "public_repos": 8
->   }
->   ```
+Hoje, a maioria das APIs que você vai encontrar são **APIs web**: elas conversam por **HTTP**, o mesmo protocolo que o navegador usa para abrir sites. A conversa sempre tem duas metades:
 
-### Gírias e termos da área
+- a **requisição** (*request*), que o cliente envia;
+- a **resposta** (*response*), que o servidor devolve.
 
-- Endpoint: um endereço específico da API que faz uma coisa. "Esse endpoint retorna a lista de pedidos."
-- Bater na API / chamar a API: fazer uma requisição. "O script bate na API dos Correios a cada cinco minutos." Cada requisição também é chamada de chamada (call).
-- Consumir / expor uma API: quem usa a API está consumindo; quem oferece está expondo. "Nosso sistema consome a API do Mercado Livre e expõe uma API para o app mobile."
-- Payload: o conteúdo útil que vai no corpo da requisição ou da resposta. "Qual é o payload desse POST?"
-- Client / server: cliente é quem pede, servidor é quem responde. O mesmo sistema pode ser os dois ao mesmo tempo: servidor para quem o chama e cliente das APIs que ele chama.
-- Documentação / docs: o "cardápio" da API, explicando quais endpoints existem, o que cada um espera receber e o que devolve. Ler docs é uma habilidade que você vai usar todos os dias.
-- API pública, privada e de parceiros: pública é aberta para qualquer desenvolvedor usar; privada (ou interna) é só para os sistemas da própria empresa; de parceiros é liberada para empresas específicas com acordo.
-- API key / chave de API: uma senha que identifica quem está chamando a API. Vamos aprofundar autenticação na Parte 2, mas já guarde uma regra: chave de API nunca vai chumbada no código nem para o GitHub. Ela fica num arquivo .env ou num cofre de segredos.
-- Integração: a ligação entre dois sistemas, geralmente via API. "Fiz a integração com o ERP."
+### A requisição tem quatro partes
 
+1. **Endereço (URL / endpoint).** Para onde o pedido vai, por exemplo `https://api.github.com/users/octocat`. Cada endereço específico que faz uma coisa é chamado de *endpoint*.
+2. **Método (ou verbo).** O que você quer fazer:
+   - `GET`: buscar ou ler algo ("me mostra os dados do usuário").
+   - `POST`: criar algo novo ("cadastra este pedido").
+   - `PUT` / `PATCH`: atualizar algo que já existe. O `PUT` costuma substituir o recurso inteiro; o `PATCH` muda só uma parte.
+   - `DELETE`: apagar algo.
+3. **Cabeçalhos (*headers*).** Informações extras sobre o pedido, como "estou enviando JSON" ou "esta é a minha chave de acesso". São como o envelope de uma carta: não são o conteúdo, mas dizem como tratá-lo.
+4. **Corpo (*body*).** Os dados que você envia, quando há algum. Um `GET` normalmente não tem corpo; um `POST` que cria um pedido leva os dados do pedido.
 
-## Analogia
+### A resposta tem três partes
 
----
+1. **Código de status.** Um número de três dígitos que diz de cara se deu certo. A regra de bolso é olhar o primeiro dígito:
 
-Imagine que você está num restaurante. Você (o cliente) quer comida, e quem faz a comida é a cozinha (o servidor). Você não entra na cozinha, não mexe nas panelas e nem sabe a receita. Você olha o cardápio, faz o pedido ao garçom, e ele volta com o prato.
+   | Faixa | Significado | Exemplos |
+   |---|---|---|
+   | **2xx** | Deu certo | `200 OK`, `201 Created` (criado com sucesso) |
+   | **3xx** | Redirecionamento: o que você procura está em outro endereço | `301 Moved Permanently` |
+   | **4xx** | O erro foi do **cliente** (você pediu algo errado) | `400 Bad Request` (pedido mal formado), `401 Unauthorized` (você não se identificou), `403 Forbidden` (identificou-se, mas não tem permissão), `404 Not Found` (não existe), `429 Too Many Requests` (pedindo rápido demais) |
+   | **5xx** | O erro foi do **servidor** (o pedido estava certo, mas o servidor falhou) | `500 Internal Server Error` (quebrou algo lá dentro), `503 Service Unavailable` (fora do ar ou sobrecarregado) |
 
-Nessa história, o garçom é a API. Ele leva seu pedido num formato que a cozinha entende e traz de volta a resposta. O **cardápio** é a documentação da API: a lista do que você pode pedir e como pedir. Se você pedir algo que não está no cardápio, o garçom volta dizendo "isso não temos", que é exatamente o que uma API faz quando recebe um pedido inválido.
+   > ⚠️ **Guarde a diferença entre 4xx e 5xx**, porque ela é muito importante em DevOps. Um pico de **5xx** costuma indicar um **incidente**: o seu sistema está quebrado. Um pico de **4xx** geralmente indica que algum cliente está usando a API errado.
 
-_O ponto central é_: a cozinha pode trocar de cozinheiro, de fogão ou de receita, e você nem fica sabendo, desde que o cardápio continue o mesmo. Em software, isso significa que o time de um sistema pode reescrever tudo por dentro sem quebrar quem usa a API dele.
+2. **Cabeçalhos da resposta.** Informações sobre a resposta, como o formato dos dados e por quanto tempo ela pode ficar em cache.
+3. **Corpo da resposta.** Os dados em si, quase sempre em **JSON**: um formato de texto simples, organizado em pares `"chave": valor`.
 
+   ```json
+   {
+     "login": "octocat",
+     "name": "The Octocat",
+     "public_repos": 8
+   }
+   ```
+
+## Analogia: o restaurante
+
+Você (o **cliente**) quer comida, e quem faz a comida é a cozinha (o **servidor**). Você não entra na cozinha, não mexe nas panelas e nem sabe a receita. Olha o cardápio, faz o pedido ao garçom, e ele volta com o prato.
+
+- O **garçom** é a API: leva o seu pedido num formato que a cozinha entende e traz a resposta.
+- O **cardápio** é a documentação da API: a lista do que você pode pedir e como pedir.
+- Se você pedir algo fora do cardápio, o garçom volta dizendo "isso não temos". É exatamente o que uma API faz quando recebe um pedido inválido (veja o `404` na Prática 2).
+
+**O ponto central:** a cozinha pode trocar de cozinheiro, de fogão ou de receita e você nem fica sabendo, desde que o cardápio continue o mesmo. Em software, isso significa que o time de um sistema pode reescrever tudo por dentro sem quebrar quem usa a API dele.
 
 ## Na prática
 
----
+Os dois testes usam o `curl`, uma ferramenta de terminal que faz requisições HTTP. A API usada é a pública do GitHub, que não exige cadastro para consultas simples. Com o `-i`, o `curl` mostra também o cabeçalho da resposta, não só o corpo.
 
-### Prática 1
+### Prática 1 — uma requisição que dá certo
 
 ```bash
-# o comando curl faz requisições HTTP, e o -i pede para mostrar o head da resposta junto com o body 
-curl -i https://api.github.com/users/EnzoDiasDev
-```
-**O que aconteceu:**
-```bash
-# Resultado do comando
-HTTP/2 200   # 200 é o código de status da requisição
-date: Mon, 05 Oct 2026 17:54:59 GMT
-content-type: application/json; charset=utf-8      # application/json é o formato dos dados e o charset é a codificação dos caracteres
-cache-control: public, max-age=60, s-maxage=60
-vary: Accept,Accept-Encoding, Accept, X-Requested-With
-etag: W/"3bb5a1b7f69759de0525dfc92154b9d5dea6948293ea3ab4aac6904551fed691"
-last-modified: Wed, 30 Sep 2026 17:08:34 GMT
-x-github-media-type: github.v3; format=json
-x-github-api-version-selected: 2022-11-28
-access-control-expose-headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
-access-control-allow-origin: *
-strict-transport-security: max-age=31536000; includeSubdomains; preload
-x-frame-options: deny
-x-content-type-options: nosniff
-x-xss-protection: 0
-referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin
-content-security-policy: default-src 'none'
-server: github.com
-accept-ranges: bytes
-x-ratelimit-limit: 60
-x-ratelimit-remaining: 29
-x-ratelimit-used: 31
-x-ratelimit-resource: core
-x-ratelimit-reset: 1791223875
-content-length: 1374
-x-github-request-id: D1D6:B4B67:2CB55F:305D15:6AC3E473
-x-github-edge-region: brazilsouth
-
-{              
-  #body
-  "login": "EnzoDiasDev",
-  "id": 191253787,
-  "node_id": "U_kgDOC2ZNGw",
-  "avatar_url": "https://avatars.githubusercontent.com/u/191253787?v=4",
-  "gravatar_id": "",
-  "url": "https://api.github.com/users/EnzoDiasDev",
-  "html_url": "https://github.com/EnzoDiasDev",
-  "followers_url": "https://api.github.com/users/EnzoDiasDev/followers",
-  "following_url": "https://api.github.com/users/EnzoDiasDev/following{/other_user}",
-  "gists_url": "https://api.github.com/users/EnzoDiasDev/gists{/gist_id}",
-  "starred_url": "https://api.github.com/users/EnzoDiasDev/starred{/owner}{/repo}",
-  "subscriptions_url": "https://api.github.com/users/EnzoDiasDev/subscriptions",
-  "organizations_url": "https://api.github.com/users/EnzoDiasDev/orgs",
-  "repos_url": "https://api.github.com/users/EnzoDiasDev/repos",
-  "events_url": "https://api.github.com/users/EnzoDiasDev/events{/privacy}",
-  "received_events_url": "https://api.github.com/users/EnzoDiasDev/received_events",
-  "type": "User",
-  "user_view_type": "public",
-  "site_admin": false,
-  "name": "__EnzoDias__",
-  "company": null,
-  "blog": "",
-  "location": null,
-  "email": null,
-  "hireable": null,
-  "bio": null,
-  "twitter_username": null,
-  "public_repos": 9,
-  "public_gists": 0,
-  "followers": 2,
-  "following": 6,
-  "created_at": "2024-12-10T14:03:52Z",
-  "updated_at": "2026-09-30T17:08:34Z"
-}
+curl -i https://api.github.com/users/octocat
 ```
 
-### Prática 2
+Resultado (resumido; a resposta real tem mais cabeçalhos e mais campos):
 
-```bash
-# Teste com usuário inexistente
-curl -i https://api.github.com/users/---
-```
-
-**O que aconteceu?**
-
-```bash
-HTTP/2 404  # Status code mudou de 200 para 404
-date: Mon, 05 Oct 2026 18:02:43 GMT
-content-type: application/json; charset=utf-8
-x-github-media-type: github.v3; format=json
-x-github-api-version-selected: 2022-11-28
-access-control-expose-headers: ETag, Link, Location, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Used, X-RateLimit-Resource, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval, X-GitHub-Media-Type, X-GitHub-SSO, X-GitHub-Request-Id, Deprecation, Sunset, Warning
-access-control-allow-origin: *
-strict-transport-security: max-age=31536000; includeSubdomains; preload
-x-frame-options: deny
-x-content-type-options: nosniff
-x-xss-protection: 0
-referrer-policy: origin-when-cross-origin, strict-origin-when-cross-origin
-content-security-policy: default-src 'none'
-vary: Accept-Encoding, Accept, X-Requested-With
-server: github.com
-x-ratelimit-limit: 60
-x-ratelimit-remaining: 19
-x-ratelimit-used: 41
-x-ratelimit-resource: core
-x-ratelimit-reset: 1791223875
-content-length: 103
-x-github-request-id: D1EA:263760:2ED2C9:32A3C0:6AC3E643
-x-github-edge-region: brazilsouth
+```http
+HTTP/2 200                                          # status 200: deu certo
+content-type: application/json; charset=utf-8      # os dados vêm em JSON
+cache-control: public, max-age=60                  # pode ficar em cache por 60 s
+x-ratelimit-limit: 60                              # limite: 60 requisições por hora sem autenticação
+x-ratelimit-remaining: 59                          # quantas ainda restam
 
 {
-"message": "Not Found",  # Não encontrado, uma pista
-"documentation_url": "https://docs.github.com/rest",
-"status": "404"  # Status message que diz "Não existe!"
+  "login": "octocat",
+  "id": 583231,
+  "type": "User",
+  "name": "The Octocat",
+  "company": "@github",
+  "location": "San Francisco",
+  "public_repos": 8,
+  "followers": 24925,
+  "created_at": "2011-01-25T18:44:36Z"
 }
 ```
 
-## Dúvidas
+**O que aprendi:** o código `200`, o formato JSON no `content-type` e o corpo com os dados do usuário. Os cabeçalhos `x-ratelimit-*` mostram que a API limita quantos pedidos cada cliente pode fazer (assunto da [Parte 2](api2.md)).
 
----
+### Prática 2 — uma requisição que dá errado
 
-- [ ] Respostas de APIs geralmente ficam armazenadas no Redis?
+```bash
+# usuário que não existe
+curl -i https://api.github.com/users/usuario-que-nao-existe-12345
+```
+
+```http
+HTTP/2 404                                         # mudou de 200 para 404: não encontrado
+content-type: application/json; charset=utf-8
+
+{
+  "message": "Not Found",                           # explica o que houve
+  "documentation_url": "https://docs.github.com/rest",   # onde ler mais
+  "status": "404"
+}
+```
+
+**O que aprendi:** um erro `4xx` também vem com corpo explicando o problema, e o status mudou de `200` para `404` sem que eu fizesse nada de errado no comando. O erro foi o **dado** (usuário inexistente), e o servidor respondeu corretamente.
+
+## Vocabulário da área
+
+| Termo | O que significa |
+|---|---|
+| **Endpoint** | Um endereço específico da API que faz uma coisa. "Esse endpoint retorna a lista de pedidos." |
+| **Bater na API / chamar a API** | Fazer uma requisição. "O script bate na API dos Correios a cada cinco minutos." Cada requisição também é chamada de *call*. |
+| **Consumir / expor** | Quem usa a API a *consome*; quem a oferece a *expõe*. "Nosso sistema consome a API do marketplace e expõe uma API para o app mobile." |
+| **Payload** | O conteúdo útil do corpo de uma requisição ou resposta. "Qual é o payload desse POST?" |
+| **Client / server** | Cliente é quem pede; servidor é quem responde. O mesmo sistema pode ser os dois ao mesmo tempo. |
+| **Documentação (docs)** | O "cardápio" da API: endpoints existentes, o que cada um espera e o que devolve. Ler docs é uma habilidade de uso diário. |
+| **API pública / privada / de parceiros** | Pública: aberta a qualquer desenvolvedor. Privada (interna): só para os sistemas da própria empresa. De parceiros: liberada a empresas específicas, com acordo. |
+| **API key (chave de API)** | Uma "senha" que identifica quem chama a API. Aprofundamos na [Parte 2](api2.md). |
+| **Integração** | A ligação entre dois sistemas, geralmente via API. "Fiz a integração com o ERP." |
+
+> 🔒 **Regra de segurança desde já:** chave de API **nunca** vai escrita direto no código nem para o GitHub. Ela fica num arquivo `.env` (que não é versionado) ou num cofre de segredos.
+
+## Dúvidas em aberto
+
+- [ ] As respostas de uma API costumam ficar armazenadas em um cache como o Redis? (Pesquisar: cache no servidor × cache no cliente.)
+
+## Referências
+
+- [Documentação da API REST do GitHub](https://docs.github.com/rest)
+- [Parte 2 — intermediário](api2.md)
