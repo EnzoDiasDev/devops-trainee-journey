@@ -1,7 +1,7 @@
 # Lab: <nome do lab>
 
 > **Tema:** <linux | git | docker | aws | kubernetes | incidentes | ...>
-> **Tipo:** <ambiente criado pelo Claude | desafio próprio | indicado pelo gestor>
+> **Tipo:** <ambiente criado pelo Claude | desafio próprio | indicado por alguém>
 > **Iniciado em:** AAAA-MM-DD
 > **Status:** 🟡 Em andamento <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
 
