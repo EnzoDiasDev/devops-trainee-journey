@@ -1,7 +1,7 @@
 # Laboratório Linux — Dia 1 (sábado, 26/09)
 ### Tema: o servidor da LogiTrack · arquivos, busca, texto, redirecionamento e permissões
 
-A LogiTrack é uma empresa de logística fictícia (sim, parente da sua automação dos Correios). Você acabou de entrar no time e herdou um servidor bagunçado: arquivos escondidos, logs enormes, permissões erradas e um script de backup que não funciona. Seu trabalho é investigar e consertar.
+A LogiTrack é uma empresa de logística fictícia. Você acabou de entrar no time e herdou um servidor bagunçado: arquivos escondidos, logs enormes, permissões erradas e um script de backup que não funciona. Seu trabalho é investigar e consertar.
 
 **Tempo estimado:** 4h a 4h30, contando as anotações.
 
