@@ -1,108 +1,106 @@
-# OneUptime
+# OneUptime e SSO
 
 > **Tema:** incidentes
-> **Origem:** gestor
-> **Iniciado em:** AAAA-MM-DD
+> **Origem:** indicado
+> **Iniciado em:** 2026-10-06
 > **Status:** 🟡 Em andamento <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
+> **Nível:** iniciante a intermediário.
+> **Pré-requisitos (recomendado):** [Status page](../status-page.md) e [Gerenciamento de incidentes](../gerenciamento-de-incidentes.md).
 
-## Em minhas palavras
+## Em resumo
 
-O OneUptime é uma plataforma de observabilidade e gestão de incidentes que busca substituir outras aplicações separadas (**Datadog** de APM e métricas, **PugerDuty** de On-calls e Alerts, **StatusPage.io** para status pages, **Incident.io** para gestão de incidentes).
+O **OneUptime** é uma plataforma de código aberto de **observabilidade e gestão de incidentes**: monitora se os sistemas estão no ar, avisa a pessoa de plantão quando algo quebra, publica a status page e ajuda a conduzir o incidente. A proposta é **substituir várias ferramentas separadas por uma só**.
 
-**Troque serviços indivíduais pelo OneUptime**
-| Instead of… | Use OneUptime for… |
-|---|---|
-| Pingdom / UptimeRobot | **Uptime Monitoring** — website, API, ping, port, SSL, DNS & synthetic checks from around the world |
-| StatusPage.io | **Status Pages** — branded public & private status pages with subscribers |
-| PagerDuty / Opsgenie | **On-Call & Alerts** — schedules, escalation policies, SMS / call / push / Slack |
-| Incident.io | **Incident Management** — declare, triage, communicate, and post-mortem |
-| Datadog / New Relic | **APM & Metrics** — traces, dashboards, and service performance |
-| Loggly | **Log Management** — collect, search, and alert on logs |
-| Sentry | **Error Tracking** — exceptions with full stack traces and context |
+A segunda metade desta nota explica o **SSO** (login único), porque ele é a principal diferença entre a edição gratuita e a paga, e é um conceito que aparece em todo ambiente corporativo.
 
-**Edições**
-- Community — gratuita, self-hosted (Docker Compose ou Kubernetes), com tudo o que está na tabela acima.
-- Enterprise — adiciona **SSO** (SAML/OIDC), SCIM, audit logs, data residency e suporte prioritário. 
+## O que o OneUptime faz
 
-**O que é o SSO?** 
-Basicamente é um login único, uma solução de autenticação que permite o usuário se autenticar uma única vez em um provedor de identidade (IdP).
-> **O que é um IdP?**
-> É o sistema central que CRIA, ARMAZENA e AUTENTICA identidades digitais. É a "fonte da verdade" sobre "quem é quem" dentro de uma organização. 
->> - O que ele faz?
->>   - Cria e gerencia identidades
->>   - Autentica (MFA, password, certificado, ...) e decide se o acesso é liberado
->>   - Emite tokens/assertions: Após autenticar, o IdP assina um token (**OIDC**) ou um assertion (**SAML**) 
->>   - Gestiona ciclo de vida: provisioning/desprovisioning de contas, muitas vezes **SCIM** e políticas de acesso (RBAC, ABAC)
->> - Exemplos:
->>   - Okta 
->>   - Google workspace 
->>   - Auth0 
->>   - Keycloak  
->
-> <div style="display: flex; gap: 20px;">
->   <div style="flex: 1;">
->     <h3>OIDC (OpenID Connect)</h3>
->     <p>
->         É um protocolo de autenticação construído sobre <i>OAuth 2.0</i> (que nada mais é do que outro protocolo/framework de autorização. <i>Atenção: ele não é um IdP!</i>). Enquanto:
->     </p>
->     <ul>
->         <li>OAuth 2.0 resolve a <strong>autorização</strong>, ou seja, é o "O que o app pode acessar?"</li>
->         <li>- OIDC adiciona uma camada de <strong>autenticação</strong>, é o "Quem é esse usuário?"</li>
->     </ul>
->     <h5>
->         O que ele faz na prática?
->     </h5>
->     <p>
->         Quando você clica em "Sign in with Google" ou "Login com Microsoft", o fluxo que se segue é OIDC:
->     </p>
->     <ol>
->         <li>O app (Relying Party) redireciona o usuário ao IdP (Identity Provider)</li>
->         <li>O IdP autentica o usuário (senha, MFA, biometria, passkey…)</li>
->         <li>O IdP devolve um ID Token (um JWT assinado) contendo claims do usuário: sub, email, name, exp, etc.</li>
->         <li>O app valida a assinatura do token e estabelece a sessão</li>
->     </ol>
->     <h5>O usuário nunca digita senha no app, apenas no IdP.</h5>
->   </div>
->   <div style="flex: 1;">
->     <h3>SAML (Security Assertion Markup Language)</h3>
->     <p>É um padrão aberto baseado em XML para trocar dados de autenticação e autorização entre IdP e um <strong>SP (Service Provider)</strong>.</p>
->     <h5>Fluxo SAML</h5>
->     <ol>
->         <li>Usuário acessa o SP (ex.: Salesforce, Zoom)</li>
->         <li>O SP redireciona o browser ao IdP com um AuthnRequest (XML)</li>
->         <li>O IdP autentica o usuário (senha, MFA, etc.)</li>
->         <li>O IdP gera uma SAML Assertion — um documento XML assinado digitalmente (X.509) contendo:</li>
->         <ul>
->             <li>NameID (identificador do usuário)</li>
->             <li>Atributos: e-mail, nome, grupos, papéis</li>
->             <li>Timestamp e condições de validade</li>
->         </ul>
->         <li>O browser faz HTTP POST da assertion de volta ao SP</li>
->         <li>O SP valida a assinatura com o certificado do IdP → libera o acesso</li>
->     </ol>
->   </div>
-> </div>
->
-> ---
->
-> **Diferença entre OCID e SAML**
-> | | *SAML 2.0* | *OIDC* |
-> |---|---|---|
-> | Formato | *XML* (documentos assinados) | *JWT* (JSON) |
-> | Foco | SSO enterprise, web apps | Apps web, mobile, APIs, SPAs |
-> | Idade | ~2005 (mais antigo) | ~2014 (mais moderno) |
-> | Transmissão | HTTP POST/Redirect (form hidden no browser) | HTTP + JSON (API-friendly) |
-> | Suporte mobile/API | ❌ Não suporta | ✅ Sim |
->
->.
+Cada linha da tabela mostra uma ferramenta conhecida e a função equivalente no OneUptime:
 
-Ou seja, o SSO centraliza diversas ferramentas e plataformas do ecossistema DevOps, como o Azure DevOps, GitHub, BackStage, Jira, entre outras, sem precisar redigitar credenciais de acesso para cada aplicação.
+| Em vez de... | ...o OneUptime oferece | Para que serve |
+|---|---|---|
+| Pingdom, UptimeRobot | **Uptime Monitoring** | Testa de vários pontos do mundo se um site, API, porta, certificado SSL ou DNS está respondendo |
+| StatusPage.io | **Status Pages** | Páginas de status públicas ou privadas, com a identidade visual da empresa e inscrição de assinantes |
+| PagerDuty, Opsgenie | **On-Call & Alerts** | Escalas de plantão, políticas de escalonamento e alertas por SMS, ligação, push e Slack |
+| Incident.io | **Incident Management** | Declarar, fazer a triagem, comunicar e escrever o postmortem do incidente |
+| Datadog, New Relic | **APM & Metrics** | Traces, painéis e desempenho dos serviços (*APM = Application Performance Monitoring*) |
+| Loggly | **Log Management** | Coletar, pesquisar e criar alertas sobre logs |
+| Sentry | **Error Tracking** | Registrar exceções com a pilha de chamadas (*stack trace*) e o contexto do erro |
 
-**Mas por que ele é essencial no mundo DevOps?**
-1. **Centraliza a segurança**: reduz a superfície de ataque e impõe políticas consistentes (MFA) em um único ponto.
-2. **Acelera o provisionamento**: conceder e revogar acesso a múltiplos sistemas se torna uma ação única no IdP.
-3. **Melhora a produtividade**: elimina a fadiga de senhas e o tempo gasto com logins repetidos durante o fluxo de trabalho.
+### Edições
+
+- **Community:** gratuita e *self-hosted* (você mesmo instala, com Docker Compose ou Kubernetes). Inclui tudo o que está na tabela.
+- **Enterprise:** acrescenta **SSO** (SAML/OIDC), **SCIM**, *audit logs* (registro de quem fez o quê), residência de dados e suporte prioritário.
+
+## Diagrama: a tela de monitoramento
+
+O arquivo [`detect.excalidraw`](detect.excalidraw) (abre em [excalidraw.com](https://excalidraw.com)) anota os elementos da tela de detecção:
+
+- **Probes:** servidores de monitoramento externos, espalhados geograficamente, que testam continuamente a disponibilidade e o desempenho dos sistemas.
+- **Uptime:** a porcentagem de tempo em que o sistema ficou operando e acessível, sem interrupções, num período definido (aqui, 30 dias). O tempo total de instabilidade aparece detalhado ao lado.
+- **Percentis de tempo de resposta:** servem para entender o comportamento real do sistema e a experiência dos usuários.
+  - **p50 (mediana):** o tempo de resposta que 50% dos usuários experimentam. Metade das requisições foi mais rápida que esse valor, e metade foi mais lenta. É o cenário do "usuário comum".
+  - **p95:** 95% das pessoas tiveram um tempo menor ou igual a esse valor, e os 5% mais azarados sofreram uma lentidão ainda maior. É a métrica mais usada para rastrear gargalos, porque a média esconde esses casos ruins.
+
+## SSO, IdP, OIDC e SAML
+
+### O que é SSO?
+
+**SSO** (*Single Sign-On*, login único) permite que a pessoa se autentique **uma única vez** em um provedor de identidade e, a partir daí, acesse várias ferramentas sem digitar a senha de novo em cada uma.
+
+### O que é um IdP?
+
+**IdP** (*Identity Provider*, provedor de identidade) é o sistema central que **cria, guarda e autentica** as identidades digitais. É a "fonte da verdade" sobre quem é quem dentro de uma organização. Exemplos: Okta, Google Workspace, Auth0 e Keycloak.
+
+O que ele faz:
+
+- cria e gerencia as identidades;
+- autentica (senha, MFA, certificado...) e decide se o acesso é liberado;
+- emite um *token* assinado (OIDC) ou uma *assertion* assinada (SAML) provando que a autenticação aconteceu;
+- gerencia o ciclo de vida das contas (criar e remover acessos), muitas vezes via **SCIM**, e aplica políticas de acesso.
+
+### OIDC × SAML: os dois protocolos de SSO
+
+**OIDC (OpenID Connect)** é uma camada de **autenticação** construída sobre o **OAuth 2.0**. Os dois se complementam:
+
+- **OAuth 2.0** responde: "o que este aplicativo pode acessar?" (**autorização**);
+- **OIDC** responde: "quem é este usuário?" (**autenticação**).
+
+Fluxo quando você clica em "Entrar com Google":
+
+1. O aplicativo redireciona você ao IdP.
+2. O IdP autentica você (senha, MFA, biometria...).
+3. O IdP devolve ao aplicativo um **ID Token**: um JWT assinado com dados do usuário (e-mail, nome, validade...).
+4. O aplicativo valida a assinatura do token e abre a sessão.
+
+Você só digita a senha no IdP, nunca no aplicativo.
+
+**SAML (Security Assertion Markup Language)** é um padrão aberto, baseado em **XML**, para trocar dados de autenticação entre o IdP e o aplicativo (chamado de **SP**, *Service Provider*, como Salesforce ou Zoom).
+
+1. Você acessa o SP.
+2. O SP redireciona seu navegador ao IdP com um pedido de autenticação em XML.
+3. O IdP autentica você.
+4. O IdP gera uma **SAML Assertion**: um XML assinado digitalmente, com o identificador do usuário, atributos (e-mail, grupos, papéis) e prazo de validade.
+5. Seu navegador entrega a assertion ao SP.
+6. O SP confere a assinatura com o certificado do IdP e libera o acesso.
+
+| | **SAML 2.0** | **OIDC** |
+|---|---|---|
+| Formato | XML (documento assinado) | JWT (JSON) |
+| Uso típico | SSO corporativo em aplicações web | Apps web, mobile, APIs e SPAs |
+| Surgiu | ~2005 (mais antigo) | ~2014 (mais moderno) |
+| Transporte | HTTP POST/Redirect (formulário oculto no navegador) | HTTP + JSON, mais amigável a APIs |
+| Mobile e APIs | Não é adequado | Sim |
+
+### Por que o SSO importa em DevOps
+
+O SSO conecta as ferramentas do ecossistema (Azure DevOps, GitHub, Backstage, Jira, o próprio OneUptime...) sem pedir as credenciais de novo em cada uma. Ele é essencial porque:
+
+1. **Centraliza a segurança:** reduz a superfície de ataque e aplica políticas iguais (como MFA) em um único ponto.
+2. **Acelera o provisionamento:** liberar ou revogar o acesso a vários sistemas vira uma única ação no IdP.
+3. **Aumenta a produtividade:** elimina a fadiga de senhas e o tempo perdido em logins repetidos.
 
 ## Referências
 
-- [GitHuB OneUptime](https://github.com/oneuptime/oneuptime)
+- [Repositório do OneUptime no GitHub](https://github.com/oneuptime/oneuptime)
+- [Status page](../status-page.md) e [Gerenciamento de incidentes](../gerenciamento-de-incidentes.md): os conceitos que o OneUptime automatiza

@@ -1,15 +1,21 @@
 # Gerenciamento de incidentes
 
 > **Tema:** incidentes
-> **Origem:** gestor
+> **Origem:** indicado
 > **Iniciado em:** 2026-09-30
 > **Status:** 🟢 Concluído <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
+
+> **Nível:** iniciante. Faz par com [Status page](status-page.md).
+
+## Em resumo
+
+Gerenciamento de incidentes é o **processo organizado** que um time segue quando um sistema em produção quebra: quem faz o quê, em que ordem, e como se aprende com o erro. Esta nota cobre o ciclo de vida, os papéis, a diferença entre incidente e problema, as ferramentas e o vocabulário da área.
 
 ## Em minhas palavras
 
 **O que é?**
 Gerenciamento de incidentes é a forma **organizada** que um time lida com um problema em produção. Geralmente segue um fluxo:
-> Detectar o problema -> Fazer a triagem -> Mobilização da equipe -> Mitigação de danos -> Resolução do problema -> Postmortem
+> Detectar o problema → Fazer a triagem → Mobilizar a equipe → Mitigar os danos → Resolver o problema → Postmortem
 
 **Para que serve?**
 Sem processo um incidente vira bagunça. O processo existe para que, no momento de maior pressão, ninguém precise improvisar como agir, só o que fazer tecnicamente. Exemplo:
@@ -64,3 +70,8 @@ Você vai esbarrar em ferramentas de alerta e plantão, como **PagerDuty** e **i
 ## Analogia
 
 A melhor analogia é um pronto-socorro. Quando chega um paciente grave, a equipe não para para descobrir a origem de tudo. Primeiro faz a triagem ("quão grave é?"), depois estabiliza o paciente ("para o sangramento"), e só quando ele está fora de perigo investiga a causa com calma. Cada pessoa tem um papel claro: quem coordena, quem opera, quem fala com a família. Incidentes em sistemas funcionam igual. Aliás, boa parte das práticas da área foi copiada literalmente dos bombeiros americanos, que criaram um sistema de comando para emergências chamado ICS.
+
+## Referências
+
+- [Status page](status-page.md): como comunicar o incidente ao público
+- [Google SRE Book — Managing Incidents](https://sre.google/sre-book/managing-incidents/)
