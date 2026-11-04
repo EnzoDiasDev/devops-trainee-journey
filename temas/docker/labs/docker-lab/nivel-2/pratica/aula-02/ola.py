@@ -1,0 +1,1 @@
+print("Olá do Python dentro do container!")
