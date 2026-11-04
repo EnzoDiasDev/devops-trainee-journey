@@ -1,15 +1,15 @@
-# API - Parte II - Intermediário
+# API — Parte 2: intermediário
 
 > **Tema:** API
 > **Origem:** Próprio
 > **Iniciado em:** 2026-10-05
 > **Status:** 🟡 Em andamento <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
 
-## Em minhas palavras
+> **Pré-requisito:** [Parte 1 — o básico](api1.md) (requisição, resposta, métodos e códigos de status).
 
----
+## Em resumo
 
-A parte II é voltada para como as APIs são organizadas, protegidas e usadas na prática. O padão REST, autenticação, paginação, limites de uso, webhooks e as ferramentas do dia a dia.
+Esta parte explica como as APIs são **organizadas, protegidas e usadas na prática**: o padrão REST, autenticação, paginação, limite de uso, webhooks e as ferramentas do dia a dia.
 
 **REST (Representational State Transfer)** não é uma tecnologia nem uma biblioteca. É um estilo de arquitetura, um conjunto de convenções sobre como desenhar uma API. Quando alguém diz que uma API é RESTful, quer dizer que ela segue essas convenções.
 
@@ -23,7 +23,7 @@ POST   /pedidos        → cria um pedido novo
 PATCH  /pedidos/42     → altera parte do pedido 42
 DELETE /pedidos/42     → apaga o pedido 42
 ```
-Repare que as URLs têm só substantivos (pedidos), nunca verbos. Uma API mal desenhada teria endereços como <code>/criarPedido</code> ou <code>/apagarPedido?id=42</code>. Funciona, mas foge do padrão, e o padrão é o que permite que qualquer desenvolvedor entenda sua API sem ler um manual enorme.
+Repare que as URLs têm só substantivos (pedidos), nunca verbos. Uma API mal desenhada teria endereços como `/criarPedido` ou `/apagarPedido?id=42`. Funciona, mas foge do padrão, e o padrão é o que permite que qualquer desenvolvedor entenda sua API sem ler um manual enorme.
 
 Outra convenção importante do REST é ser **stateless (sem estado)**: cada requisição precisa carregar tudo o que o servidor precisa para atendê-la. O servidor não "lembra" da requisição anterior. É como um atendente que não te reconhece: toda vez você mostra seu documento de novo. Parece chato, mas é isso que permite colocar dez servidores iguais lado a lado e mandar cada requisição para qualquer um deles.
 
@@ -37,7 +37,7 @@ Há duas formas comuns de passar informação na URL.
 
 **Query params (parâmetros de consulta)** vêm depois do ? e servem para filtrar, ordenar ou paginar, separados por &. Por exemplo:
 
-<code>GET /pedidos?status=aberto&ordenar=data&page=2</code>
+`GET /pedidos?status=aberto&ordenar=data&page=2`
 
 
 ### Idempotência: um conceito que evita prejuízo
@@ -79,7 +79,7 @@ Os dois modelos mais comuns são **offset** (?page=3&per_page=50, "pule os 100 p
 
 APIs limitam quantas requisições cada cliente pode fazer num intervalo de tempo. Isso protege o servidor de sobrecarga, seja por abuso, seja por um script mal feito rodando em loop.
 
-Quando você passa do limite, recebe o <code>429 Too Many Requests</code>. Muitas APIs informam seu saldo nos cabeçalhos da resposta, e algumas mandam um cabeçalho <code>Retry-After</code> dizendo quanto tempo esperar antes de tentar de novo.
+Quando você passa do limite, recebe o `429 Too Many Requests`. Muitas APIs informam seu saldo nos cabeçalhos da resposta, e algumas mandam um cabeçalho `Retry-After` dizendo quanto tempo esperar antes de tentar de novo.
 
 
 
@@ -111,11 +111,11 @@ O cuidado com webhooks é que seu endpoint fica exposto na internet, então ele 
 
 O padrão mais usado para documentar APIs REST é o **OpenAPI** (antigamente chamado de Swagger, e muita gente ainda chama assim). É um arquivo que descreve todos os endpoints, parâmetros e respostas, e a partir dele ferramentas geram páginas interativas onde você testa a API direto do navegador.
 
-Para fazer requisições, além do curl, você vai ver **Postman**, **Insomnia** e **Bruno**, programas com interface gráfica para montar, salvar e organizar requisições. E para ler JSON no terminal, existe o **jq**, que formata e filtra a saída. Por exemplo, <code>curl -s https://api.github.com/users/octocat | jq '.public_repos'</code> mostra só o número de repositórios.
+Para fazer requisições, além do curl, você vai ver **Postman**, **Insomnia** e **Bruno**, programas com interface gráfica para montar, salvar e organizar requisições. E para ler JSON no terminal, existe o **jq**, que formata e filtra a saída. Por exemplo, `curl -s https://api.github.com/users/octocat | jq '.public_repos'` mostra só o número de repositórios.
 
 
 
-### Gírias e termos da área
+### Vocabulário da área
 
 - **Recurso (resource)**: a "coisa" que a API manipula, como pedido, cliente ou produto.
 - Rota: sinônimo informal de endpoint, muito usado por quem programa o backend. "Criei uma rota nova para relatórios."
@@ -131,9 +131,7 @@ Para fazer requisições, além do curl, você vai ver **Postman**, **Insomnia**
 - Token: credencial temporária que comprova quem você é. "Meu token expirou."
 - Scope: o recorte de permissões que um token tem.
 
-## Dúvidas
-
----
+## Dúvidas respondidas
 
 - [X] Qual a diferença entre a API Key e a Bearer token? E por que a API key é mais usada em serviço p/ serviço?
   - Resposta: 
@@ -144,7 +142,7 @@ Para fazer requisições, além do curl, você vai ver **Postman**, **Insomnia**
     |---|---|---|
     |Identifica|A aplicação|Geralmente o usuário (ou app) com permissões específicas|
     |Duração|Longa, até você revogar|Curta (minutos/horas, revogável)|
-    |Como é obtido|Gerado em um painel|Emitido por um login/0Auth|
+    |Como é obtido|Gerado em um painel|Emitido por um login/OAuth|
     |Se vazar|Dano grande e duradouro|Dano limitado pelo tempo de expiração|
 
     - Uma API key também pode ser enviada como Bearer (Authorization: Bearer sk-...). Por isso a comparação é meio de "conceito vs. formato", e muitas APIs misturam os dois.
@@ -154,6 +152,6 @@ Para fazer requisições, além do curl, você vai ver **Postman**, **Insomnia**
       - O segredo fica seguro no servidor (variável de ambiente), longe de navegador ou celular, onde vazar é mais fácil.
       - Fácil de rotacionar e revogar por serviço
 
-- [X] Caso alguém tenha acesso ao endpoint de um webhook de mensagens de pré-venda de um marketplace, seria possível manipular de forma maliciosa?
+- [X] Caso alguém tenha acesso ao endpoint de um webhook de notificações de pagamento, seria possível manipular de forma maliciosa?
   - Resposta:
-    - Sim, mas com algumas alterações. A pessoa não **ALTERA** a mensagem original, apenas **FORJA** uma nova e manda para o endpoint como se fosse o marketplace.
+    - Sim, mas com algumas alterações. A pessoa não **ALTERA** a mensagem original, apenas **FORJA** uma nova e manda para o endpoint como se fosse o serviço de pagamento.
