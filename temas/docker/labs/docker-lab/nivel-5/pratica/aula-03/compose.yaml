@@ -1,0 +1,6 @@
+services:
+  site:
+    build: .
+    image: claude/meu-site:2.0
+    ports:
+      - "8084:80"

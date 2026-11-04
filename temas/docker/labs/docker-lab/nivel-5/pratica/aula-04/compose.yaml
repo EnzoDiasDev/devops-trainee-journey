@@ -1,0 +1,21 @@
+services:
+  web:
+    build: .
+    image: claude/contadorweb:1.0
+    ports:
+      - "8081:5000"
+    environment:
+      DB_HOST: banco
+      DB_SENHA: ${DB_PASSWORD}
+    depends_on:
+      - banco
+
+  banco:
+    image: claude/postgres:18-alpine
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - meu-banco:/var/lib/postgresql
+
+volumes:
+  meu-banco:

@@ -1,0 +1,40 @@
+services:
+  portal:
+    build: ./portal
+    image: claude/portal:1.0
+    ports:
+      - "8086:80"
+
+  nginx:
+    image: 'jc21/nginx-proxy-manager:2.16.0'
+    restart: unless-stopped
+    environment:
+      TZ: "America/Sao_Paulo"
+    ports:
+      - '8080:80'
+      - '8081:81'
+    volumes:
+      - ./data:/data
+      - ./letsencrypt:/etc/letsencrypt
+
+  api:
+    build: ./api
+    image: claude/acervo-api:1.0
+    environment:
+      DB_HOST: banco
+      DB_SENHA: ${SENHA_DO_BANCO}
+    ports:
+      - "8087:5000"
+    depends_on:
+      - banco
+
+  banco:
+    image: claude/postgres:18-alpine
+    environment:
+      POSTGRES_PASSWORD: ${SENHA_DO_BANCO}
+      TZ: "America/Sao_Paulo"
+    volumes:
+      - acervo-dados:/var/lib/postgresql
+
+volumes:
+  acervo-dados:

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acervo - Online</title>
+</head>
+<body>
+    <h1>📚 Biblioteca do Enzo, agora com Compose!</h1>
+    <p>Veja nosso acervo em <a href="http://localhost:8087">Acervo online</a></p>
+
+    <h2>Adicionar livro</h2>
+    <form id="form-livro">
+        <label for="titulo">Título</label>
+        <input type="text" id="titulo" name="titulo" required>
+        <button type="submit">Salvar</button>
+    </form>
+    <p id="mensagem"></p>
+
+    <script>
+        const form = document.getElementById("form-livro");
+        const mensagem = document.getElementById("mensagem");
+
+        form.addEventListener("submit", async (evento) => {
+            evento.preventDefault();
+            try {
+                const resposta = await fetch("http://localhost:8087/livros", {
+                    method: "POST",
+                    body: new URLSearchParams(new FormData(form)),
+                });
+                const dados = await resposta.json();
+                if (resposta.ok) {
+                    mensagem.textContent = `"${dados.titulo}" salvo no acervo!`;
+                    form.reset();
+                } else {
+                    mensagem.textContent = dados.erro;
+                }
+            } catch {
+                mensagem.textContent = "Não foi possível falar com a API.";
+            }
+        });
+    </script>
+</body>
+</html>
