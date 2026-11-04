@@ -1,49 +1,100 @@
-# Caderno de estudos git para Treinee DevOps - D5
+# Git: histórico, branches e merge
 
-## Aquecimento
+> **Tema:** Git/GitHub
+> **Origem:** próprio
+> **Status:** 🟡 Em andamento <!-- 🟢 Concluído · 🟡 Em andamento · ⚪ A fazer -->
+> **Nível:** iniciante, mas assume que você já usou `git add`, `git commit` e `git push`.
+> **Material de apoio:** [Learn Git Branching](https://learngitbranching.js.org/?locale=pt_BR), um jogo interativo que desenha os commits e as branches na tela.
 
-No seu repo, rode <code>git log --oneline --graph --all</code>. Você vai ver o merge com <code>--allow-unrelated-histories</code> que fez lá atrás, com duas linhas de histórico se juntando. Tente explicar esse desenho no caderno; é a primeira ponte com o Learn Git Branching.
+## Em resumo
 
-*  (HEAD -> main, origin/main) Adiciona estudos do dia 2 de Linux
-*  Adiciona estudos do dia 1 de Linux
-*  Merge branch 'main' of https://github.com/EnzoDiasDev/devops-trainee-journey
-|\ 
+Esta nota cobre três ideias: (1) como **ler o histórico** de um repositório com `git log --graph`, (2) o que é uma **branch** e (3) como **juntar** o trabalho de duas branches com `git merge`. Começa com um caso real: um merge que fiz entre dois históricos que não tinham nada em comum.
+
+## 1. Lendo o histórico em forma de grafo
+
+O comando abaixo mostra os commits como um desenho, incluindo as bifurcações:
+
+```bash
+git log --oneline --graph --all
+```
+
+| Parte | O que faz |
+|---|---|
+| `--oneline` | Mostra cada commit em uma linha (hash curto + mensagem) |
+| `--graph` | Desenha as linhas de ligação entre os commits |
+| `--all` | Inclui todas as branches, locais e remotas (não só a atual) |
+
+Exemplo de saída do repositório deste estudo:
+
+```text
+*   (HEAD -> main, origin/main) Adiciona estudos do dia 2 de Linux
+*   Adiciona estudos do dia 1 de Linux
+*   Merge branch 'main' of https://github.com/<usuario>/devops-trainee-journey
+|\
 | * Add entries to .gitignore for system and secrets
 | * Revise README for DevOps Trainee Journey
 | * Initial commit
-* bd543d6 Dia 1: fundamentos de Linux
+* Dia 1: fundamentos de Linux
+```
 
-**RESPOSTA**: Como o repositório remoto já havia se iniciado com arquivos diferentes dos quais existiam no repositório local (sem contar que localmente eu já tinha feito alguns commits) então foi necessário juntar essas duas "branches" para que não ouvesse conflitos.
+**Como ler:** cada `*` é um commit. Onde há `|\`, o histórico se divide em duas linhas paralelas; mais abaixo, elas se juntam de novo no commit de merge. `HEAD -> main` indica onde estou agora, e `origin/main` é a posição da `main` no GitHub.
 
-**Correção**: O repositório remoto e o local foram criados separadamente, cada um com seu próprio primeiro commit, então não tinham nenhum histórico em comum. O Git bloqueia o merge nesse caso, e o --allow-unrelated-histories libera a junção. Ele não evita conflitos: só não houve conflito porque os arquivos dos dois lados eram diferentes.
+### Por que esse desenho tem duas linhas?
 
-## Learn Git Branching
+O repositório **local** e o **remoto** (no GitHub) foram criados separadamente, cada um com o seu próprio primeiro commit. Por isso não tinham nenhum histórico em comum.
 
-### Nível 2 - Branches no Git
+Quando tentei juntá-los, o Git recusou, porque normalmente só se faz merge de históricos que partem de um ancestral comum. A flag `--allow-unrelated-histories` libera a junção:
 
-Branches no Git também são incrivelmente leves. Elas são simplesmente referências a um commit específico -- e nada mais. É por isso que muitos entusiastas do Git entoam o mantra:
+```bash
+git pull origin main --allow-unrelated-histories
+```
 
-```ramifique cedo, ramifique sempre```
+> ✏️ **Correção do que eu tinha entendido:** achava que o merge tinha sido necessário "para evitar conflitos". Não é isso. O `--allow-unrelated-histories` **não evita conflitos**: ele só destrava a junção. Neste caso não houve conflito simplesmente porque os arquivos dos dois lados eram diferentes.
 
-Devido a não existir sobrecarga de armazenamento / memória associada à criação de branches, é mais fácil dividir logicamente o seu trabalho do que ter branches grandes e gordas.
+## 2. Branches
 
+Uma **branch** é só uma **referência a um commit específico**, e nada mais. Não é uma cópia dos arquivos. Por isso criar uma branch é praticamente instantâneo e não gasta espaço, e daí vem o mantra dos usuários de Git:
 
-Comandos do nível 2:
-- git checkout <nome-da-branch> = serve para trocar de branch (dá para criar e trocar ao mesmo tempo com a flag -b) ou restaurar arquivos (git checkout -- nome-do-arquivo)
-  - Aparentemente o git checkout por ter várias funções e ser sobrecarregado, existe também o comando <code>git switch</code> para trocar de branches
+> *"Ramifique cedo, ramifique sempre."*
 
+Como é barato, vale dividir o trabalho em várias branches pequenas (uma por funcionalidade ou correção) em vez de manter uma única branch grande.
 
-### Nível 3 - Branches e Merge
+### Comandos
 
-precisamos aprender uma forma de combinar o trabalho de duas branches diferentes. Isso nos permitirá ramificar, desenvolver um novo recurso, e então combiná-lo de volta.
+| Comando | O que faz |
+|---|---|
+| `git branch` | Lista as branches |
+| `git checkout <branch>` | Troca para outra branch |
+| `git checkout -b <branch>` | Cria uma branch nova **e** troca para ela |
+| `git switch <branch>` | Faz o mesmo que `checkout`, só para trocar de branch |
+| `git switch -c <branch>` | Cria e troca (equivalente a `checkout -b`) |
 
-O primeiro método para combinar trabalho que vamos examinar é o git merge. O merge do Git cria um commit especial que possui dois pais únicos. Um commit com dois pais essencialmente significa "Quero incluir todo o trabalho deste pai aqui com o daquele outro pai ali, e com o do conjunto de todos os seus ancestrais."
+> O `git checkout` faz coisas demais: troca de branch **e** restaura arquivos (`git checkout -- arquivo`). Por isso o Git criou o `git switch` (só troca de branch) e o `git restore` (só restaura arquivos), que são mais claros. Os dois jeitos funcionam.
 
-Comandos do nível 3:
-- git merge <nome-da-branch> = faz a combinação de dois históricos de commits de duas branches diferentes. Você executa na **BRANCH DE DESTINO**, ou seja, a que irá receber as mudanaças.
-  - Exemplo:
-    ```git
-      git checkout main
-      git merge feature-login
-    ```
-    Isso integra todos os commits de featura-login em main
+## 3. Merge: juntando o trabalho de duas branches
+
+Depois de ramificar e desenvolver uma funcionalidade, é preciso trazer o resultado de volta. O primeiro método é o `git merge`.
+
+O merge cria um **commit especial com dois pais**. Isso significa: "quero incluir todo o trabalho deste pai e também o do outro pai, com todos os seus ancestrais".
+
+```bash
+git checkout main            # 1. vá para a branch que vai RECEBER as mudanças
+git merge feature-login      # 2. traga o trabalho de feature-login para a main
+```
+
+> ⚠️ **Regra:** o `git merge` é executado na **branch de destino**, isto é, na que vai receber as mudanças. No exemplo, os commits de `feature-login` passam a fazer parte da `main`, e a `feature-login` continua como estava.
+
+## Resumo rápido
+
+| Quero... | Comando |
+|---|---|
+| Ver o histórico desenhado | `git log --oneline --graph --all` |
+| Criar uma branch e entrar nela | `git switch -c nome` |
+| Trocar de branch | `git switch nome` |
+| Juntar `nome` na branch atual | `git merge nome` |
+| Juntar históricos sem ancestral comum | `git merge <remoto>/<branch> --allow-unrelated-histories` |
+
+## Próximos passos
+
+- [ ] Concluir os próximos níveis do Learn Git Branching (rebase e referências relativas).
+- [ ] Comparar as estratégias de merge: merge commit, squash e rebase (ver [ROADMAP](../../../ROADMAP.md)).
