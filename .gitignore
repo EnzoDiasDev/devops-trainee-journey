@@ -9,3 +9,13 @@
 *.pem
 credentials
 \[critico\]*
+
+# Artefatos gerados pelos labs
+temas/**/area/
+temas/git/labs/git-lab/aula-relampago/pratica/
+*.zip
+*.log
+*.sqlite
+keys.json
+.url
+senha.txt
