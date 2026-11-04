@@ -1,0 +1,13 @@
+services:
+  site:
+    image: claude/nginx:alpine
+    ports:
+      - "8082:80"
+      
+  blog:
+    image: claude/nginx:alpine
+    ports:
+      - "8083:80"
+
+  
+
